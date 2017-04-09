@@ -1,7 +1,7 @@
 FROM debian:jessie
 MAINTAINER Adam Dodman <adam.dodman@gmx.com>
 
-ENV UID=368 UNAME=radarr GID=990 GNAME=media
+ENV UID=901 UNAME=radarr GID=900 GNAME=media
 
 RUN apt-get update \
  && apt-get install -y curl libmono-cil-dev mediainfo 
@@ -18,5 +18,5 @@ VOLUME ["/config", "/media"]
 
 EXPOSE 7878
 
-CMD ["mono","/Radarr/Radarr.exe","--no-browser","-data=/config/radarr"]
+CMD ["mono","/Radarr/Radarr.exe","--no-browser","-data=/config"]
 
