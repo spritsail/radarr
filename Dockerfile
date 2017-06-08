@@ -15,7 +15,8 @@ RUN apt-get update \
 
 RUN chmod +x /usr/bin/* \
  && radarr_tag=$(curl -sX GET "https://api.github.com/repos/Radarr/Radarr/releases" | awk '/tag_name/{print $4;exit}' FS='[""]') \
- && curl -L https://github.com/Radarr/Radarr/releases/download/${radarr_tag}/Radarr.develop.${radarr_tag#v}.linux.tar.gz | tar zxf - 
+ && curl -L https://github.com/Radarr/Radarr/releases/download/${radarr_tag}/Radarr.develop.${radarr_tag#v}.linux.tar.gz | tar zxf - \
+ && chmod -R 755 /Radarr/*
 
 
 VOLUME ["/config", "/media"]
