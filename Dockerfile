@@ -13,6 +13,7 @@ RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/ap
         export RADARR_TAG="$(wget -O- "https://api.github.com/repos/Radarr/Radarr/releases" | jq -r '.[0].tag_name')"; \
     fi \
  && mkdir -p /radarr \
+ && echo "Building Radarr $RADARR_TAG" \
  && wget -O- https://github.com/Radarr/Radarr/releases/download/${RADARR_TAG}/Radarr.develop.${RADARR_TAG#v}.linux.tar.gz \
         | tar xz -C /radarr --strip-components=1 \
  && chmod -R 755 /radarr/* \
