@@ -7,13 +7,13 @@ ARG RADARR_TAG
 
 RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories \
  && apk --no-cache add mono@testing mediainfo xmlstarlet su-exec tini \
- && apk --no-cache add -t build_deps curl jq \
+ && apk --no-cache add -t build_deps jq \
     \
  && if [ -z "$RADARR_TAG" ]; then \
-        export RADARR_TAG="$(curl -sX GET "https://api.github.com/repos/Radarr/Radarr/releases" | jq -r '.[0].tag_name')"; \
+        export RADARR_TAG="$(wget -O- "https://api.github.com/repos/Radarr/Radarr/releases" | jq -r '.[0].tag_name')"; \
     fi \
  && mkdir -p /radarr \
- && curl -sSL https://github.com/Radarr/Radarr/releases/download/${RADARR_TAG}/Radarr.develop.${RADARR_TAG#v}.linux.tar.gz \
+ && wget -O- https://github.com/Radarr/Radarr/releases/download/${RADARR_TAG}/Radarr.develop.${RADARR_TAG#v}.linux.tar.gz \
         | tar xz -C /radarr --strip-components=1 \
  && chmod -R 755 /radarr/* \
     \
