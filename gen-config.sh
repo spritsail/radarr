@@ -6,7 +6,7 @@ CFG_FILE="$CFG_DIR/config.xml"
 function getOpt { xmlstarlet sel -t -c /Config/"$1" "$CFG_FILE"; }
 function setOpt {
     # If element exists
-    if xml sel -t -c "/Config/$1" "$CFG_FILE"; then
+    if xml sel -Q -t -c "/Config/$1" "$CFG_FILE"; then
         # Update the existing element
         xmlstarlet ed -O -L -u "/Config/$1" -v "$2" "$CFG_FILE"
     else
@@ -49,4 +49,4 @@ setOpt UpdateAutomatically False
 setOpt LaunchBrowser False
 
 # Format the document pretty :)
-xmlstarlet fo "$CFG_FILE"
+xmlstarlet fo "$CFG_FILE" &>/dev/null
