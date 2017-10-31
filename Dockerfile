@@ -1,28 +1,32 @@
-FROM debian:jessie
-MAINTAINER Adam Dodman <adam.dodman@gmx.com>
+FROM alpine:edge
+LABEL maintainer="Adam Dodman <adam.dodman@gmx.com>"
 
 ENV UID=901 GID=900
 
-ARG TINI_VERSION=v0.14.0
-ARG SU_EXEC_VER=v0.2
+ARG RADARR_TAG
 
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-ADD https://github.com/javabean/su-exec/releases/download/v0.2/su-exec.amd64 /usr/bin/su-exec
-ADD entrypoint.sh /usr/bin/entrypoint
-
-RUN apt-get update \
- && apt-get install -y curl libmono-cil-dev mediainfo 
-
-RUN chmod +x /usr/bin/* \
- && radarr_tag=$(curl -sX GET "https://api.github.com/repos/Radarr/Radarr/releases" | awk '/tag_name/{print $4;exit}' FS='[""]') \
- && curl -L https://github.com/Radarr/Radarr/releases/download/${radarr_tag}/Radarr.develop.${radarr_tag#v}.linux.tar.gz | tar zxf - \
- && chmod -R 755 /Radarr/*
-
+RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories \
+ && apk --no-cache add mono@testing mediainfo xmlstarlet su-exec tini \
+ && apk --no-cache add -t build_deps jq \
+    \
+ && if [ -z "$RADARR_TAG" ]; then \
+        export RADARR_TAG="$(wget -O- "https://api.github.com/repos/Radarr/Radarr/releases" | jq -r '.[0].tag_name')"; \
+    fi \
+ && mkdir -p /radarr \
+ && echo "Building Radarr $RADARR_TAG" \
+ && wget -O- https://github.com/Radarr/Radarr/releases/download/${RADARR_TAG}/Radarr.develop.${RADARR_TAG#v}.linux.tar.gz \
+        | tar xz -C /radarr --strip-components=1 \
+ && find /radarr -type f -exec chmod 644 {} + \
+ && find /radarr -type d -o -name '*.exe' -exec chmod 755 {} + \
+    \
+ && apk --no-cache del build_deps
 
 VOLUME ["/config", "/media"]
 
 EXPOSE 7878
 
-ENTRYPOINT ["tini","--","/usr/bin/entrypoint"]
-CMD ["mono","/Radarr/Radarr.exe","--no-browser","-data=/config"]
+COPY *.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh
 
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
+CMD ["mono", "/radarr/Radarr.exe", "--no-browser", "--data=/config"]
