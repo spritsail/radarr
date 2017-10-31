@@ -16,7 +16,8 @@ RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/ap
  && echo "Building Radarr $RADARR_TAG" \
  && wget -O- https://github.com/Radarr/Radarr/releases/download/${RADARR_TAG}/Radarr.develop.${RADARR_TAG#v}.linux.tar.gz \
         | tar xz -C /radarr --strip-components=1 \
- && chmod -R 755 /radarr/* \
+ && find /radarr -type f -exec chmod 644 {} + \
+ && find /radarr -type d -o -name '*.exe' -exec chmod 755 {} + \
     \
  && apk --no-cache del build_deps
 
