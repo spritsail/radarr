@@ -3,10 +3,12 @@ set -e
 
 CFG_FILE="$CFG_DIR/config.xml"
 
-function getOpt { xmlstarlet sel -t -c /Config/"$1" "$CFG_FILE"; }
-function setOpt {
+getOpt() {
+    xmlstarlet sel -t -c /Config/"$1" "$CFG_FILE"
+}
+setOpt() {
     # If element exists
-    if xml sel -Q -t -c "/Config/$1" "$CFG_FILE"; then
+    if xmlstarlet sel -Q -t -c "/Config/$1" "$CFG_FILE"; then
         # Update the existing element
         xmlstarlet ed -O -L -u "/Config/$1" -v "$2" "$CFG_FILE"
     else
@@ -14,7 +16,7 @@ function setOpt {
         xmlstarlet ed -O -L -s /Config -t elem -n "$1" -v "$2" "$CFG_FILE"
     fi
 }
-function bool {
+bool() {
     local var="$(echo $1 | tr 'A-Z' 'a-z')"
     case "$var" in
         y|ye|yes|t|tr|tru|true|1)

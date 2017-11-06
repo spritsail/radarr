@@ -4,8 +4,8 @@ set -e
 export CFG_DIR="${CFG_DIG:-/config}"
 
 if ! su-exec "$UID:$GID" touch "$CFG_DIR/.write-test"; then
-    2>&1 echo "Error: No write access to $CFG_DIR"
-    exit 28
+    chown $UID:$GID "$CFG_DIR"
+    chmod o+rw "$CFG_DIR"
 fi
 # Remove temporary file
 rm -f touch "$CFG_DIR/.write-test"
