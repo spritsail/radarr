@@ -25,6 +25,7 @@ RUN apt-get update \
  && apt-get autoremove -y
 
 VOLUME ["/config", "/media"]
+ENV XDG_CONFIG_HOME=/config
 
 EXPOSE 7878
 
