@@ -6,24 +6,21 @@ pipeline:
     commands:
       # Grab the current version, prevents race conditions
       - apk add --no-cache curl jq
+      - set -o pipefail
       - curl -fL "http://radarr.aeonlucid.com/v1/update/$RADARR_BRANCH?os=linux&version=0.0"
             | tee /dev/stderr
             | jq -r '.updatePackage.version' > .radarr_tag
 
   build:
-    image: docker
-    volumes:
-       - /var/run/docker.sock:/var/run/docker.sock
-    commands:
-      - docker build
-            --no-cache --pull
-            --build-arg RADARR_TAG=$(cat .radarr_tag)
-            -t radarr-dev .
+      image: spritsail/docker-build
+      volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
+      repo: radarr-dev
+      build_args:
+        - 'RADARR_TAG=%file: .radarr_tag'
 
   test:
     image: docker
-    volumes:
-       - /var/run/docker.sock:/var/run/docker.sock
+    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
     commands:
       - apk add --no-cache curl
       - CON_NAME=$(docker run -dt -e UID=0 radarr-dev)
@@ -41,17 +38,20 @@ pipeline:
       - docker rm $$CON_NAME
 
   publish:
-    image: docker
-    secrets: [ DOCKER_USER, DOCKER_PASS ]
-    when:
-       event: [ push, tag, deployment ]
-    volumes:
-       - /var/run/docker.sock:/var/run/docker.sock
-    commands:
-       - echo $DOCKER_USER
-       - docker tag radarr-dev adamant/radarr:latest
-       - docker tag radarr-dev adamant/radarr:$(cat .radarr_tag)
-       - docker login -u $DOCKER_USER -p $DOCKER_PASS
-       - docker push adamant/radarr
-       - docker rmi radarr-dev adamant/radarr:latest adamant/radarr:$(cat .radarr_tag)
-       - echo "CONGRATS! SUCCESSFULLY BUILT RADARR-STABLE!"
+    image: spritsail/docker-publish
+    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
+    secrets: [ docker_username, docker_password, microbadger_token ]
+    when: { event: [ push, tag, deployment ] }
+    from: radarr-dev
+    repo: spritsail/radarr
+    tags:
+      - 'latest'
+      - '%fileauto: .radarr_tag'
+
+  notify:
+    image: appleboy/drone-telegram
+    when: { status: [ success, failure ] }
+    secrets: [ telegram_token, telegram_to ]
+    message: |
+      *{{repo.owner}}/{{repo.name}} [{{commit.branch}}]*: Build #{{build.number}}: *{{uppercase build.status}}*
+      {{build.link}}

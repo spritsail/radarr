@@ -1,10 +1,18 @@
-[hub]: https://hub.docker.com/r/adamant/radarr
+[hub]: https://hub.docker.com/r/spritsail/radarr
+[git]: https://github.com/spritsail/radarr
+[drone]: https://drone.spritsail.io/spritsail/radarr
+[mbdg]: https://microbadger.com/images/spritsail/radarr
 
-# [adamant/radarr][hub]
+# [Spritsail/Radarr][hub]
+[![Layers](https://images.microbadger.com/badges/image/spritsail/radarr.svg)][mbdg]
+[![Latest Version](https://images.microbadger.com/badges/version/spritsail/radarr.svg)][hub]
+[![Git Commit](https://images.microbadger.com/badges/commit/spritsail/radarr.svg)][git]
+[![Docker Stars](https://img.shields.io/docker/stars/spritsail/radarr.svg)][hub]
+[![Docker Pulls](https://img.shields.io/docker/pulls/spritsail/radarr.svg)][hub]
+[![Build Status](https://drone.spritsail.io/api/badges/spritsail/radarr/status.svg)][drone]
 
-[![](https://images.microbadger.com/badges/image/adamant/radarr.svg)](https://microbadger.com/images/adamant/radarr) [![Docker Pulls](https://img.shields.io/docker/pulls/adamant/radarr.svg)][hub] [![Docker Stars](https://img.shields.io/docker/stars/adamant/radarr.svg)][hub] [![Build Status](https://drone.adam-ant.co.uk/api/badges/Adam-Ant/docker-radarr/status.svg)](https://drone.adam-ant.co.uk/Adam-Ant/docker-radarr)
 
-[Radarr](https://github.com/Radarr/Radarr) running in Alpine Linux on (for now) experimental Mono builds. This container provides some simple initial configuration scripts to set some runtime variables (see [#Configuration](#configuration) for details)
+[Radarr](https://github.com/Radarr/Radarr) running in Debian Stretch. This container provides some simple initial configuration scripts to set some runtime variables (see [#Configuration](#configuration) for details)
 
 ## Usage
 
@@ -12,10 +20,10 @@ Basic usage with default configuration:
 ```bash
 docker run -dt
     --name=radarr
-    --restart=always
+    --restart=on-failure:10
     -v $PWD/config:/config
     -p 7878:7878
-    adamant/radarr
+    spritsail/radarr
 ```
 
 **Note:** _Is is important to use `-t` (pseudo-tty) as without it there are no logs produced._
@@ -24,13 +32,13 @@ Advanced usage with custom configuration:
 ```bash
 docker run -dt
     --name=radarr
-    --restart=always
+    --restart=on-failure:10
     -v $PWD/config:/config
     -p 7878:7878
     -e URL_BASE=/radarr
     -e ANALYTICS=false
     -e ...
-    adamant/radarr
+    spritsail/radarr
 ```
 
 ### Volumes

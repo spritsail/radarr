@@ -1,12 +1,21 @@
 FROM debian:stretch-slim
-LABEL maintainer="Adam Dodman <adam.dodman@gmx.com>"
-
-ENV UID=901 GID=900
 
 ARG RADARR_TAG
 ARG RADARR_BRANCH=develop
 ARG TINI_VERSION=v0.16.1
 ARG SU_EXEC_VER=v0.2
+
+LABEL maintainer="Spritsail <radarr@spritsail.io>" \
+      org.label-schema.vendor="Spritsail" \
+      org.label-schema.name="Radarr" \
+      org.label-schema.url="https://radarr.video" \
+      org.label-schema.description="A movie management and downloader tool" \
+      org.label-schema.version=${RADARR_TAG} \
+      io.spritsail.version.radarr=${RADARR_TAG} \
+      io.spritsail.version.tini=${TINI_VER} \
+      io.spritsail.version.su-exec=${SU_EXEC_VER}
+
+ENV UID=901 GID=900
 
 RUN apt-get update \
  && apt-get install -y libmono-cil-dev mediainfo xmlstarlet curl jq \
