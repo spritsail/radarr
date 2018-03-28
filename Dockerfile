@@ -2,8 +2,8 @@ FROM debian:stretch-slim
 
 ARG RADARR_TAG
 ARG RADARR_BRANCH=develop
-ARG TINI_VERSION=v0.16.1
-ARG SU_EXEC_VER=v0.2
+ARG TINI_VER=v0.17.0
+ARG SU_EXEC_VER=v0.3
 
 LABEL maintainer="Spritsail <radarr@spritsail.io>" \
       org.label-schema.vendor="Spritsail" \
@@ -17,9 +17,16 @@ LABEL maintainer="Spritsail <radarr@spritsail.io>" \
 
 ENV UID=901 GID=900
 
+# Copy in bootstrap scripts
+COPY *.sh /usr/local/bin/
+
 RUN apt-get update \
  && apt-get install -y libmono-cil-dev mediainfo xmlstarlet curl jq \
     \
+    # Pull tini and su-exec utilities
+ && curl -fsSLo sbin/su-exec https://github.com/frebib/su-exec/releases/download/${SU_EXEC_VER}/su-exec-x86_64 \
+ && curl -fsSLo sbin/tini https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 \
+ && chmod +x sbin/su-exec sbin/tini usr/local/bin/*.sh \
  && if [ -z "$RADARR_TAG" ]; then \
         export RADARR_TAG="$(curl -fL "http://radarr.aeonlucid.com/v1/update/${RADARR_BRANCH}?os=linux&version=0.0" | jq -r '.updatePackage.version')"; \
     fi \
@@ -37,11 +44,6 @@ VOLUME ["/config", "/media"]
 ENV XDG_CONFIG_HOME=/config
 
 EXPOSE 7878
-
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /sbin/tini
-ADD https://github.com/javabean/su-exec/releases/download/v0.2/su-exec.amd64 /sbin/su-exec
-COPY *.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/*.sh /sbin/tini /sbin/su-exec
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
 CMD ["mono", "/radarr/Radarr.exe", "--no-browser", "--data=/config"]
