@@ -1,7 +1,6 @@
 FROM debian:stretch-slim
 
-ARG RADARR_TAG
-ARG RADARR_BRANCH=develop
+ARG RADARR_TAG=0.2.0.1120
 ARG TINI_VER=v0.17.0
 ARG SU_EXEC_VER=v0.3
 
@@ -22,17 +21,11 @@ COPY *.sh /usr/local/bin/
 
 RUN apt-get update \
  && apt-get install -y libmono-cil-dev mediainfo xmlstarlet curl jq \
-    \
-    # Pull tini and su-exec utilities
  && curl -fsSLo sbin/su-exec https://github.com/frebib/su-exec/releases/download/${SU_EXEC_VER}/su-exec-x86_64 \
  && curl -fsSLo sbin/tini https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 \
  && chmod +x sbin/su-exec sbin/tini usr/local/bin/*.sh \
- && if [ -z "$RADARR_TAG" ]; then \
-        export RADARR_TAG="$(curl -fL "http://radarr.aeonlucid.com/v1/update/${RADARR_BRANCH}?os=linux&version=0.0" | jq -r '.updatePackage.version')"; \
-    fi \
  && mkdir -p /radarr \
- && echo "Building Radarr $RADARR_TAG" \
- && curl -fL "https://github.com/Radarr/Radarr/releases/download/v${RADARR_TAG}/Radarr.${RADARR_BRANCH}.${RADARR_TAG}.linux.tar.gz" \
+ && curl -fL "https://github.com/Radarr/Radarr/releases/download/v${RADARR_TAG}/Radarr.develop.${RADARR_TAG}.linux.tar.gz" \
         | tar xz -C /radarr --strip-components=1 \
  && find /radarr -type f -exec chmod 644 {} + \
  && find /radarr -type d -o -name '*.exe' -exec chmod 755 {} + \

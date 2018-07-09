@@ -1,22 +1,8 @@
 pipeline:
-  identify:
-    image: docker
-    environment:
-      - RADARR_BRANCH=develop
-    commands:
-      # Grab the current version, prevents race conditions
-      - apk add --no-cache curl jq
-      - set -o pipefail
-      - curl -fL "http://radarr.aeonlucid.com/v1/update/$RADARR_BRANCH?os=linux&version=0.0"
-            | tee /dev/stderr
-            | jq -r '.updatePackage.version' > .radarr_tag
-
   build:
       image: spritsail/docker-build
       volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
       repo: radarr-dev
-      build_args:
-        - 'RADARR_TAG=%file: .radarr_tag'
 
   test:
     image: docker
@@ -46,7 +32,8 @@ pipeline:
     repo: spritsail/radarr
     tags:
       - 'latest'
-      - '%fileauto: .radarr_tag'
+      - '%labelauto: io.spritsail.version.radarr'
+
   notify:
     image: spritsail/notify
     when: { status: [ success, failure ] }
