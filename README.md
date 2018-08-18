@@ -20,7 +20,7 @@ Basic usage with default configuration:
 ```bash
 docker run -dt
     --name=radarr
-    --restart=on-failure:10
+    --restart=unless-stopped
     -v $PWD/config:/config
     -p 7878:7878
     spritsail/radarr
@@ -32,7 +32,7 @@ Advanced usage with custom configuration:
 ```bash
 docker run -dt
     --name=radarr
-    --restart=on-failure:10
+    --restart=unless-stopped
     -v $PWD/config:/config
     -p 7878:7878
     -e URL_BASE=/radarr
@@ -43,9 +43,11 @@ docker run -dt
 
 ### Volumes
 
-* `/config` - Radarr configuration file and database storage. Should be readable and writeable by `$UID` 
+* `/config` - Radarr configuration file and database storage. Should be readable and writeable by `$SUID` 
 
-Other files accessed by Radarr such as movie directories should also be readable and writeable by `$UID` or `$GID` with sufficient permissions.
+Other files accessed by Radarr such as movie directories should also be readable and writeable by `$SUID` or `$SGID` with sufficient permissions.
+
+`$SUID` defaults to 901
 
 ### Configuration
 
