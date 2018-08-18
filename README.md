@@ -1,30 +1,30 @@
-[hub]: https://hub.docker.com/r/spritsail/sonarr
-[git]: https://github.com/spritsail/sonarr
-[drone]: https://drone.spritsail.io/spritsail/sonarr
-[mbdg]: https://microbadger.com/images/spritsail/sonarr
+[hub]: https://hub.docker.com/r/spritsail/radarr
+[git]: https://github.com/spritsail/radarr
+[drone]: https://drone.spritsail.io/spritsail/radarr
+[mbdg]: https://microbadger.com/images/spritsail/radarr
 
-# [Spritsail/Sonarr][hub]
+# [Spritsail/Radarr][hub]
 
-[![Layers](https://images.microbadger.com/badges/image/spritsail/sonarr.svg)][mbdg]
-[![Latest Version](https://images.microbadger.com/badges/version/spritsail/sonarr.svg)][hub]
-[![Git Commit](https://images.microbadger.com/badges/commit/spritsail/sonarr.svg)][git]
-[![Docker Pulls](https://img.shields.io/docker/pulls/spritsail/sonarr.svg)][hub]
-[![Docker Stars](https://img.shields.io/docker/stars/spritsail/sonarr.svg)][hub]
-[![Build Status](https://drone.spritsail.io/api/badges/spritsail/sonarr/status.svg)][drone]
+[![Layers](https://images.microbadger.com/badges/image/spritsail/radarr.svg)][mbdg]
+[![Latest Version](https://images.microbadger.com/badges/version/spritsail/radarr.svg)][hub]
+[![Git Commit](https://images.microbadger.com/badges/commit/spritsail/radarr.svg)][git]
+[![Docker Pulls](https://img.shields.io/docker/pulls/spritsail/radarr.svg)][hub]
+[![Docker Stars](https://img.shields.io/docker/stars/spritsail/radarr.svg)][hub]
+[![Build Status](https://drone.spritsail.io/api/badges/spritsail/radarr/status.svg)][drone]
 
 
-[Sonarr](https://github.com/Sonarr/Sonarr) running in Alpine Linux. This container provides some simple initial configuration scripts to set some runtime variables (see [#Configuration](#configuration) for details)
+[Radarr](https://github.com/Radarr/Radarr) running in Alpine Linux. This container provides some simple initial configuration scripts to set some runtime variables (see [#Configuration](#configuration) for details)
 
 ## Usage
 
 Basic usage with default configuration:
 ```bash
 docker run -dt
-    --name=sonarr
+    --name=radarr
     --restart=always
     -v $PWD/config:/config
-    -p 8989:8989
-    spritsail/sonarr
+    -p 7878:7878
+    spritsail/radarr
 ```
 
 **Note:** _Is is important to use `-t` (pseudo-tty) as without it there are no logs produced._
@@ -32,23 +32,23 @@ docker run -dt
 Advanced usage with custom configuration:
 ```bash
 docker run -dt
-    --name=sonarr
+    --name=radarr
     --restart=always
     -v $PWD/config:/config
-    -p 8989:8989
-    -e URL_BASE=/sonarr
+    -p 7878:7878
+    -e URL_BASE=/radarr
     -e ANALYTICS=false
     -e ...
-    spritsail/sonarr
+    spritsail/radarr
 ```
 
 ### Volumes
 
-* `/config` - Sonarr configuration file and database storage. Should be readable and writeable by `$SUID`
+* `/config` - Radarr configuration file and database storage. Should be readable and writeable by `$SUID`
 
-Other files accessed by Sonarr such as tv-show directories should also be readable and writeable by `$SUID` or `$SGID` with sufficient permissions.
+Other files accessed by Radarr such as movie directories should also be readable and writeable by `$SUID` or `$SGID` with sufficient permissions.
 
-`$SUID` defaults to 906
+`$SUID` defaults to 901
 
 ### Configuration
 

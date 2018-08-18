@@ -37,10 +37,6 @@ camel() { echo $1 | awk '{print toupper(substr($1,1,1)) tolower(substr($1,2))}';
 
 # Create config.xml file and fill in some sane defaults (or fill existing empty file)
 
-# NOTE: If these defaults need to be set differently,
-# please open an issue or pull request on the repo:
-#   https://github.com/Adam-Ant/docker-sonarr
-
 if [ ! -f "$CFG_FILE" ] || [ ! -s "$CFG_FILE" ]; then
     (echo '<Config>'; echo '</Config>') > "$CFG_FILE"
     setOpt AnalyticsEnabled False

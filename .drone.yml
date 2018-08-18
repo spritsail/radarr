@@ -2,30 +2,30 @@ pipeline:
   build:
     image: spritsail/docker-build
     volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
-    repo: sonarr-dev
+    repo: radarr-dev
 
   test:
     image: spritsail/docker-test
     volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
-    repo: sonarr-dev
+    repo: radarr-dev
     run_args: -t -e SUID=0 -e API_KEY=drone
-    curl: ':8989/api/system/status'
+    curl: ':7878/api/system/status'
     curl_opts: --header x-api-key:drone
     verbose: true
     pipe: |
       jq -r ".version" |
-      grep -qw "$(label io.spritsail.version.sonarr)"
+      grep -qw "$(label io.spritsail.version.radarr)"
 
   publish:
     image: spritsail/docker-publish
     volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
     secrets: [ docker_username, docker_password, microbadger_token ]
     when: { branch: [ master ], event: [ push, tag, deployment ] }
-    from: sonarr-dev
-    repo: spritsail/sonarr
+    from: radarr-dev
+    repo: spritsail/radarr
     tags:
       - 'latest'
-      - '%labelauto: io.spritsail.version.sonarr'
+      - '%labelauto: io.spritsail.version.radarr'
 
   notify:
     image: spritsail/notify

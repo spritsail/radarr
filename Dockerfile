@@ -1,23 +1,23 @@
 FROM spritsail/mono:4.5
 
-ARG SONARR_VER=2.0.0.5228
+ARG RADARR_VER=0.2.0.1120
 
-ENV SUID=906 SGID=900
+ENV SUID=901 SGID=900
 
-LABEL maintainer="Spritsail <sonarr@spritsail.io>" \
+LABEL maintainer="Spritsail <radarr@spritsail.io>" \
       org.label-schema.vendor="Spritsail" \
-      org.label-schema.name="Sonarr" \
-      org.label-schema.url="https://sonarr.tv/" \
-      org.label-schema.description="A TV show management and downloader tool" \
-      org.label-schema.version=${SONARR_VER} \
-      io.spritsail.version.sonarr=${SONARR_VER}
+      org.label-schema.name="Radarr" \
+      org.label-schema.url="https://radarr.video" \
+      org.label-schema.description="A movie management and downloader tool" \
+      org.label-schema.version=${RADARR_VER} \
+      io.spritsail.version.radarr=${RADARR_VER}
 
-WORKDIR /sonarr
+WORKDIR /radarr
 
 COPY *.sh /usr/local/bin/
 
 RUN apk add --no-cache sqlite-libs libmediainfo-patched xmlstarlet \
- && wget -O- "http://download.sonarr.tv/v2/master/mono/NzbDrone.master.${SONARR_VER}.mono.tar.gz" \
+ && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.develop.${RADARR_VER}.linux.tar.gz \
         | tar xz --strip-components=1 \
  && find -type f -exec chmod 644 {} + \
  && find -type d -o -name '*.exe' -exec chmod 755 {} + \
@@ -29,7 +29,7 @@ RUN apk add --no-cache sqlite-libs libmediainfo-patched xmlstarlet \
 VOLUME ["/config", "/media"]
 ENV XDG_CONFIG_HOME=/config
 
-EXPOSE 8989
+EXPOSE 7878
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
-CMD ["mono", "/sonarr/NzbDrone.exe", "--no-browser", "--data=/config"]
+CMD ["mono", "/radarr/Radarr.exe", "--no-browser", "--data=/config"]
