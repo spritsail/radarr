@@ -26,10 +26,14 @@ RUN apk add --no-cache sqlite-libs libmediainfo-patched xmlstarlet \
  && rm -rf NzbDrone.Update \
  && chmod +x /usr/local/bin/*.sh
 
-VOLUME ["/config", "/media"]
+VOLUME /config
 ENV XDG_CONFIG_HOME=/config
 
 EXPOSE 7878
+
+HEALTHCHECK --start-period=10s --timeout=5s \
+    CMD wget -qO /dev/null 'http://localhost:7878/api/system/status' \
+            --header "x-api-key: $(xmlstarlet sel -t -v '/Config/ApiKey' /config/config.xml)"
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
 CMD ["mono", "/radarr/Radarr.exe", "--no-browser", "--data=/config"]
