@@ -25,7 +25,7 @@ pipeline:
     repo: spritsail/radarr
     tags:
       - 'latest'
-      - '%labelauto: io.spritsail.version.radarr'
+      - '%label io.spritsail.version.radarr | %auto'
 
   notify:
     image: spritsail/notify
