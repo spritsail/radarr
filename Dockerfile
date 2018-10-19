@@ -22,6 +22,10 @@ RUN apk add --no-cache sqlite-libs libmediainfo-patched xmlstarlet \
  && find -type f -exec chmod 644 {} + \
  && find -type d -o -name '*.exe' -exec chmod 755 {} + \
  && find -name '*.mdb' -delete \
+# Remove unmanted js source-map files
+ && find UI -name '*.map' -delete \
+# These directories are in the wrong place
+ && rm -rf UI/Content/_output \
 # Where we're going, we don't need ~roads~ updates!
  && rm -rf NzbDrone.Update \
  && chmod +x /usr/local/bin/*.sh
