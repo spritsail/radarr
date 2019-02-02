@@ -16,7 +16,7 @@ WORKDIR /radarr
 
 COPY *.sh /usr/local/bin/
 
-RUN apk add --no-cache sqlite-libs libmediainfo-patched xmlstarlet \
+RUN apk add --no-cache sqlite-libs libmediainfo xmlstarlet \
  && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.v${RADARR_VER}.linux.tar.gz \
         | tar xz --strip-components=1 \
  && find -type f -exec chmod 644 {} + \
