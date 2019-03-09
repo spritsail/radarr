@@ -1,6 +1,6 @@
 FROM spritsail/mono:4.5
 
-ARG RADARR_VER=0.2.0.1217
+ARG RADARR_VER=0.2.0.1293
 
 ENV SUID=901 SGID=900
 
@@ -17,7 +17,7 @@ WORKDIR /radarr
 COPY *.sh /usr/local/bin/
 
 RUN apk add --no-cache sqlite-libs libmediainfo xmlstarlet \
- && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.v${RADARR_VER}.linux.tar.gz \
+ && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.develop.${RADARR_VER}.linux.tar.gz \
         | tar xz --strip-components=1 \
  && find -type f -exec chmod 644 {} + \
  && find -type d -o -name '*.exe' -exec chmod 755 {} + \
