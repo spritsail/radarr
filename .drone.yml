@@ -1,33 +1,67 @@
-pipeline:
-  build:
-    image: spritsail/docker-build
-    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  pull: always
+  image: spritsail/docker-build
+  settings:
     repo: radarr-dev
 
-  test:
-    image: spritsail/docker-test
-    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
-    repo: radarr-dev
-    run_args: -t -e SUID=0 -e API_KEY=drone
-    curl: ':7878/api/system/status'
+- name: test
+  pull: always
+  image: spritsail/docker-test
+  settings:
+    curl: :7878/api/system/status
     curl_opts: --header x-api-key:drone
-    verbose: true
     pipe: |
       jq -r ".version" |
       grep -qw "$(label io.spritsail.version.radarr)"
+    repo: radarr-dev
+    run_args: -t -e SUID=0 -e API_KEY=drone
+    verbose: true
 
-  publish:
-    image: spritsail/docker-publish
-    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
-    secrets: [ docker_username, docker_password, microbadger_token ]
-    when: { branch: [ master ], event: [ push, tag, deployment ] }
+- name: publish
+  pull: always
+  image: spritsail/docker-publish
+  settings:
     from: radarr-dev
     repo: spritsail/radarr
     tags:
-      - 'latest'
-      - '%label io.spritsail.version.radarr | %auto'
+    - 'latest'
+    - '%label io.spritsail.version.radarr | %auto'
+  environment:
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    DOCKER_USERNAME:
+      from_secret: docker_username
+  when:
+    branch:
+    - master
+    event:
+    - push
+    - tag
 
-  notify:
-    image: spritsail/notify
-    when: { status: [ success, failure ] }
-    secrets: [ webhook_url, notify_token ]
+- name: notify
+  pull: always
+  image: spritsail/notify
+  environment:
+    NOTIFY_TOKEN:
+      from_secret: notify_token
+    WEBHOOK_URL:
+      from_secret: webhook_url
+  when:
+    status:
+    - success
+    - failure
+
+---
+kind: signature
+hmac: 4a3e7c7483ce720331ccc3e05df092421ed5b0bab8fa4ef28155bf16d9dff7dc
+
+...
