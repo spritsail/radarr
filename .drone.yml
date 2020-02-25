@@ -33,35 +33,20 @@ steps:
     from: radarr-dev
     repo: spritsail/radarr
     tags:
-    - 'latest'
+    - latest
     - '%label io.spritsail.version.radarr | %auto'
-  environment:
-    DOCKER_PASSWORD:
-      from_secret: docker_password
-    DOCKER_USERNAME:
+    username:
       from_secret: docker_username
+    password:
+      from_secret: docker_password
   when:
     branch:
     - master
     event:
     - push
-    - tag
-
-- name: notify
-  pull: always
-  image: spritsail/notify
-  environment:
-    NOTIFY_TOKEN:
-      from_secret: notify_token
-    WEBHOOK_URL:
-      from_secret: webhook_url
-  when:
-    status:
-    - success
-    - failure
 
 ---
 kind: signature
-hmac: 4a3e7c7483ce720331ccc3e05df092421ed5b0bab8fa4ef28155bf16d9dff7dc
+hmac: bb52cc39089dfff0d8791d604652a04ae9167e78b2a782ef0c4e62a158276c60
 
 ...
