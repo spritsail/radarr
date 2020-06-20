@@ -28,6 +28,9 @@ RUN apk add --no-cache sqlite-libs libmediainfo xmlstarlet \
  && rm -rf UI/Content/_output \
 # Where we're going, we don't need ~roads~ updates!
  && rm -rf NzbDrone.Update \
+ && apk add --no-cache ca-certificates-mono \
+ && update-ca-certificates \
+ && apk del --no-cache ca-certificates-mono \
  && chmod +x /usr/local/bin/*.sh
 
 VOLUME /config
