@@ -16,7 +16,7 @@ WORKDIR /radarr
 
 COPY *.sh /usr/local/bin/
 
-RUN apk add --no-cache sqlite-libs libmediainfo xmlstarlet \
+RUN apk add --no-cache ca-certificates-mono sqlite-libs libmediainfo xmlstarlet \
  && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.develop.${RADARR_VER}.linux.tar.gz \
         | tar xz --strip-components=1 \
  && find -type f -exec chmod 644 {} + \
@@ -28,9 +28,6 @@ RUN apk add --no-cache sqlite-libs libmediainfo xmlstarlet \
  && rm -rf UI/Content/_output \
 # Where we're going, we don't need ~roads~ updates!
  && rm -rf NzbDrone.Update \
- && apk add --no-cache ca-certificates-mono \
- && update-ca-certificates \
- && apk del --no-cache ca-certificates-mono \
  && chmod +x /usr/local/bin/*.sh
 
 VOLUME /config
