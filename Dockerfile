@@ -1,4 +1,4 @@
-FROM spritsail/alpine:3.12
+FROM spritsail/alpine:3.13
 
 ARG RADARR_VER=3.0.1.4259
 
@@ -14,7 +14,7 @@ LABEL maintainer="Spritsail <radarr@spritsail.io>" \
 
 WORKDIR /radarr
 
-COPY *.sh /usr/local/bin/
+COPY --chmod=755 *.sh /usr/local/bin/
 
 RUN apk add --no-cache \
         icu-libs \
@@ -24,8 +24,7 @@ RUN apk add --no-cache \
         xmlstarlet \
  && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.master.${RADARR_VER}.linux-musl-core-x64.tar.gz \
         | tar xz --strip-components=1 \
- && rm -rf Radarr.Update \
- && chmod +x /usr/local/bin/*.sh
+ && rm -rf Radarr.Update
 
 VOLUME /config
 ENV XDG_CONFIG_HOME=/config
