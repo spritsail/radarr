@@ -10,8 +10,6 @@ steps:
 - name: build
   pull: always
   image: spritsail/docker-build
-  settings:
-    repo: radarr-dotnet-dev
 
 - name: test
   pull: always
@@ -22,7 +20,6 @@ steps:
     pipe: |
       jq -r ".version" |
       grep -qw "$(label io.spritsail.version.radarr)"
-    repo: radarr-dotnet-dev
     run_args: -t -e SUID=0 -e API_KEY=drone
     verbose: true
 
@@ -30,15 +27,11 @@ steps:
   pull: always
   image: spritsail/docker-publish
   settings:
-    from: radarr-dotnet-dev
     repo: spritsail/radarr
     tags:
     - dotnet
     - '%label io.spritsail.version.radarr | %prefix dotnet'
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
+    login: {from_secret: docker_login}
   when:
     branch:
     - dotnet
@@ -47,6 +40,6 @@ steps:
 
 ---
 kind: signature
-hmac: bb52cc39089dfff0d8791d604652a04ae9167e78b2a782ef0c4e62a158276c60
+hmac: 13ae7c2ac896a8b062f9b207b752f8607d680336a1cbd8535c34cda6caf5544e
 
 ...
