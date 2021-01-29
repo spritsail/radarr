@@ -10,8 +10,6 @@ steps:
 - name: build
   pull: always
   image: spritsail/docker-build
-  settings:
-    repo: radarr-dev
 
 - name: test
   pull: always
@@ -22,7 +20,6 @@ steps:
     pipe: |
       jq -r ".version" |
       grep -qw "$(label io.spritsail.version.radarr)"
-    repo: radarr-dev
     run_args: -t -e SUID=0 -e API_KEY=drone
     verbose: true
 
@@ -30,15 +27,11 @@ steps:
   pull: always
   image: spritsail/docker-publish
   settings:
-    from: radarr-dev
     repo: spritsail/radarr
     tags:
     - latest
-    - '%label io.spritsail.version.radarr | %auto'
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
+    - '%label io.spritsail.version.radarr'
+    login: {from_secret: docker_login}
   when:
     branch:
     - master
@@ -47,6 +40,6 @@ steps:
 
 ---
 kind: signature
-hmac: bb52cc39089dfff0d8791d604652a04ae9167e78b2a782ef0c4e62a158276c60
+hmac: 3e75a44c66f6926e562ab3a91c10fc2ed1525578451cf9d91fc647c461edbbef
 
 ...

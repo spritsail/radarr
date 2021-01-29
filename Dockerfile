@@ -1,6 +1,6 @@
-FROM spritsail/mono:4.5
+FROM spritsail/alpine:3.13
 
-ARG RADARR_VER=0.2.0.1504
+ARG RADARR_VER=3.0.1.4259
 
 ENV SUID=901 SGID=900
 
@@ -14,21 +14,17 @@ LABEL maintainer="Spritsail <radarr@spritsail.io>" \
 
 WORKDIR /radarr
 
-COPY *.sh /usr/local/bin/
+COPY --chmod=755 *.sh /usr/local/bin/
 
-RUN apk add --no-cache ca-certificates-mono sqlite-libs libmediainfo xmlstarlet \
- && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.develop.${RADARR_VER}.linux.tar.gz \
+RUN apk add --no-cache \
+        icu-libs \
+        libintl \
+        libmediainfo \
+        sqlite-libs \
+        xmlstarlet \
+ && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.master.${RADARR_VER}.linux-musl-core-x64.tar.gz \
         | tar xz --strip-components=1 \
- && find -type f -exec chmod 644 {} + \
- && find -type d -o -name '*.exe' -exec chmod 755 {} + \
- && find -name '*.mdb' -delete \
-# Remove unmanted js source-map files
- && find UI -name '*.map' -delete \
-# These directories are in the wrong place
- && rm -rf UI/Content/_output \
-# Where we're going, we don't need ~roads~ updates!
- && rm -rf NzbDrone.Update \
- && chmod +x /usr/local/bin/*.sh
+ && rm -rf Radarr.Update
 
 VOLUME /config
 ENV XDG_CONFIG_HOME=/config
@@ -40,4 +36,4 @@ HEALTHCHECK --start-period=10s --timeout=5s \
             --header "x-api-key: $(xmlstarlet sel -t -v '/Config/ApiKey' /config/config.xml)"
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
-CMD ["mono", "/radarr/Radarr.exe", "--no-browser", "--data=/config"]
+CMD ["/radarr/Radarr", "--no-browser", "--data=/config"]
