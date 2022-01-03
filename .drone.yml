@@ -15,7 +15,7 @@ steps:
   pull: always
   image: spritsail/docker-test
   settings:
-    curl: :7878/api/system/status
+    curl: :7878/api/v3/system/status
     curl_opts: --header x-api-key:drone
     pipe: |
       jq -r ".version" |
