@@ -1,4 +1,4 @@
-FROM spritsail/alpine:3.15
+FROM spritsail/alpine:3.16
 
 ARG RADARR_VER=4.1.0.6175
 ARG RADARR_BRANCH=master
@@ -23,7 +23,8 @@ RUN apk add --no-cache \
         libmediainfo \
         sqlite-libs \
         xmlstarlet \
- && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.${RADARR_BRANCH}.${RADARR_VER}.linux-musl-core-x64.tar.gz \
+ && test "$(uname -m)" = aarch64 && ARCH=arm64 || ARCH=x64 \
+ && wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.${RADARR_BRANCH}.${RADARR_VER}.linux-musl-core-${ARCH}.tar.gz \
         | tar xz --strip-components=1 \
  && rm -rf Radarr.Update
 
