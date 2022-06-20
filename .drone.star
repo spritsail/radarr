@@ -39,6 +39,7 @@ def step(arch, key):
           "run_args": "-t -e SUID=0 -e API_KEY=drone",
           "curl": ":7878/api/v1/system/status",
           "curl_opts": "--header x-api-key:drone",
+          "retry": "20",
           "pipe": "jq -r \".version == \\\\\"$(label io.spritsail.version.radarr)\\\\\"\""
         }
       },
