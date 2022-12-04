@@ -1,6 +1,6 @@
 repo = "spritsail/radarr"
 architectures = ["amd64", "arm64"]
-publish_branches = ["master"]
+publish_branches = ["develop"]
 
 def main(ctx):
   builds = []
