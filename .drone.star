@@ -74,8 +74,8 @@ def publish(depends_on):
         "pull": "always",
         "settings": {
           "tags": [
-            "latest",
-            "%label io.spritsail.version.radarr | %auto"
+            "stable",
+            "%label io.spritsail.version.radarr"
           ],
           "src_registry": {"from_secret": "registry_url"},
           "src_login": {"from_secret": "registry_login"},
