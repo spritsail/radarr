@@ -5,12 +5,11 @@ ARG RADARR_BRANCH=master
 
 ENV SUID=901 SGID=900
 
-LABEL maintainer="Spritsail <radarr@spritsail.io>" \
-      org.label-schema.vendor="Spritsail" \
-      org.label-schema.name="Radarr" \
-      org.label-schema.url="https://radarr.video" \
-      org.label-schema.description="A movie management and downloader tool" \
-      org.label-schema.version=${RADARR_VER} \
+LABEL org.opencontainers.image.authors="Spritsail <radarr@spritsail.io>" \
+      org.opencontainers.image.title="Radarr" \
+      org.opencontainers.image.url="https://radarr.video" \
+      org.opencontainers.image.description="A movie management and downloader tool" \
+      org.opencontainers.image.version=${RADARR_VER} \
       io.spritsail.version.radarr=${RADARR_VER}
 
 WORKDIR /radarr
