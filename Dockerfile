@@ -1,4 +1,4 @@
-FROM spritsail/alpine:3.18
+FROM spritsail/alpine:3.21
 
 ARG RADARR_VER=5.15.1.9463
 ARG RADARR_BRANCH=master
